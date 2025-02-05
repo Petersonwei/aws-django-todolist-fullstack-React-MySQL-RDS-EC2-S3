@@ -30,12 +30,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-oc++kja+j3a+u3jhnd4zc-a^w9$gw-aw2&f0+582yl70(4zu8&'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
 
-ALLOWED_HOSTS = []
+# When doing prodution deployment, we set DEBUG to False
+DEBUG = False
+
+ALLOWED_HOSTS = ['task-api.peter-wei.com'] # This is host name of the deployed server
+
 
 
 # Application definition
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -47,10 +52,12 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'tasks',
+    'whitenoise.runserver_nostatic', # This is used to serve static files in production
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
+    'django.middleware.security.SecurityMiddleware', # Need to be at the top of the middleware list
+    'whitenoise.middleware.WhiteNoiseMiddleware', # This is used to serve static files in production
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -138,6 +145,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/') #This is used to serve static files in production.
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -145,8 +153,13 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CORS settings
-CORS_ALLOW_ALL_ORIGINS = True  # Only for development
-CORS_ALLOW_CREDENTIALS = True
+# CORS_ALLOW_ALL_ORIGINS = True  # Only for development
+# CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOWED_ORIGINS = [
+#"http://localhost:3000", #This is the host domain for the react app (DEVELOPMENT)
+"https://tasklist.peter-wei.com" #This is the host domain for the react app (PRODUCTION)
+]
 
 # REST Framework settings
 REST_FRAMEWORK = {
